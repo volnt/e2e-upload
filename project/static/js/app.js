@@ -19,8 +19,9 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
             var encryptedFile;
             var byteArray = [];
             var binary;
+            var uuid = generateUUID();
 
-            fileData = CryptoJS.AES.encrypt(fileData, "test").toString();
+            fileData = CryptoJS.AES.encrypt(fileData, uuid).toString();
             binary = atob(fileData);
 
             for (var i = 0; i < binary.length; i++) {
@@ -35,7 +36,8 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
                 var _id = response.data._id;
 
                 $scope.uploading = false;
-                $location.url("/?_id=" + response.data._id)
+                $location.url('/?_id=' + response.data._id + '&key=' + uuid);
+
             }, function (response) {
                 $scope.uploading = false;
             }, function (evt) {
@@ -46,6 +48,9 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
         reader.readAsDataURL(file);
     };
 
+    /*
+     * Download and decrypt the file with the given id
+     */
     $scope.download = function (_id) {
         $http.get('/upload/' + _id, {responseType: "arraybuffer"}).success(function (response) {
 
@@ -62,7 +67,11 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
             var fileData = _arrayBufferToBase64(response);
 
 
-            $scope.file = CryptoJS.AES.decrypt(fileData, "test").toString(CryptoJS.enc.Utf8);
+            try {
+                $scope.file = CryptoJS.AES.decrypt(fileData, $location.search().key).toString(CryptoJS.enc.Utf8);
+            } catch (err) {
+                console.log("Error decoding the file.");
+            }
         }).error(function (response) {});
     };
 
@@ -75,3 +84,21 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
         }
     })
 });
+
+/**
+ * Generate a random UUID
+ */
+function generateUUID()
+{
+    var d = new Date().getTime();
+
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c)
+    {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x3 | 0x8))
+            .toString(16);
+    });
+
+    return uuid.toLowerCase();
+}
