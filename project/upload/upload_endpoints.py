@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from flask import Blueprint, request, send_file
+from flask import Blueprint, request, send_file, current_app
 
 from ..common.response_utils import json_response
 from ..common.exceptions import BadRequest, NotFound
@@ -18,8 +18,10 @@ def post_upload():
     if not upload_file:
         raise BadRequest("UPLOAD_FILE_MANDATORY")
 
-    file_path = os.path.join('/tmp/', upload_file.filename.rsplit('/')[0])
     upload_id = unicode(uuid.uuid4())
+    file_path = os.path.join('/tmp/', upload_id)
+
+    current_app.logger.info("Saving new file in %s", file_path)
 
     upload_file.save(file_path)
     mongo.upload.insert_one({
