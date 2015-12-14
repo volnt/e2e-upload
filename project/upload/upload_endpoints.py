@@ -19,7 +19,7 @@ def post_upload():
         raise BadRequest("UPLOAD_FILE_MANDATORY")
 
     upload_id = unicode(uuid.uuid4())
-    file_path = os.path.join('/tmp/', upload_id)
+    file_path = os.path.join('/uploads/', upload_id)
 
     current_app.logger.info("Saving new file in %s", file_path)
 

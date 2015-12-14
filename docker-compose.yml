@@ -4,6 +4,7 @@ web:
     - "5000:5000"
   volumes:
     - .:/app/
+    - uploads:/uploads/
   links:
     - db
 
