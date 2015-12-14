@@ -75,12 +75,16 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
         }).error(function (response) {});
     };
 
-
     $rootScope.$on('$locationChangeSuccess', function (event) {
         var _id = $location.search()._id;
+        var raw = $location.search().raw;
 
         if (_id !== undefined) {
             $scope.download(_id);
+
+            if (raw !== undefined) {
+                $scope.raw = true;
+            }
         }
     })
 });
