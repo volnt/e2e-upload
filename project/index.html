@@ -1,12 +1,19 @@
 <html ng-app="app">
     <head>
-        <title>Project</title>
+        <title>Encrypted File Upload</title>
+        <link rel="stylesheet" href="static/css/style.css">
     </head>
     <body ng-controller="BodyCtrl">
-        <h1>Project title</h1>
-        <p>Project paragraph</p>
+        <h1>Encrypted File Upload</h1>
+        <p>Select a file you wish to upload.</p>
+        <p>It will be encrypted client side with the AES algorithm using a randomly generated key. Then it will be uploaded to the server and made available through a unique URL containing the file id and the key.</p>
+        <p>If you lose the key you will not be able to decrypt the file.</p>
 
-        <button ngf-select="upload($file)">Upload on file select</button>
+        <div class="button" ngf-select="upload($file)">Select file</div>
+        <div ngf-drop="upload($file)" class="drop-box"
+             ngf-drag-over-class="'dragover'" ngf-multiple="false">
+            Drop Images or PDFs files here
+        </div>
 
         <img ng-src="{{file}}" ng-if="file">
     </body>
