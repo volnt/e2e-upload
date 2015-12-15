@@ -24,8 +24,11 @@ def post_upload():
     current_app.logger.info("Saving new file in %s", file_path)
 
     upload_file.save(file_path)
+
     mongo.upload.insert_one({
         "_id": upload_id,
+        "name": upload_file.filename,
+        "type": upload_file.content_type,
         "path": file_path
     })
 

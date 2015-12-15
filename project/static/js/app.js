@@ -13,38 +13,43 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
 
         var reader = new FileReader();
 
-        reader.onload = function (fileData)
-        {
-            var fileData = reader.result;
-            var encryptedFile;
-            var byteArray = [];
-            var binary;
-            var uuid = generateUUID();
+        reader.onload = (function (file) {
+            return function (evt) {
+                var fileData = evt.target.result;
+                var encryptedFile;
+                var byteArray = [];
+                var binary;
+                var uuid = generateUUID();
 
-            fileData = CryptoJS.AES.encrypt(fileData, uuid).toString();
-            binary = atob(fileData);
+                fileData = CryptoJS.AES.encrypt(fileData, uuid).toString();
+                binary = atob(fileData);
 
-            for (var i = 0; i < binary.length; i++) {
-                byteArray.push(binary.charCodeAt(i));
-            }
-            encryptedFile = new Blob([new Uint8Array(byteArray)], {type: 'application/octet-stream'});
+                for (var i = 0; i < binary.length; i++) {
+                    byteArray.push(binary.charCodeAt(i));
+                }
+                encryptedFile = new Blob([new Uint8Array(byteArray)], {type: 'application/octet-stream'});
+                encryptedFile = new File([encryptedFile], file.name, {type: file.type});
 
-            Upload.upload({
-                url: '/upload/',
-                data: {file: encryptedFile}
-            }).then(function (response) {
-                var _id = response.data._id;
+                Upload.upload({
+                    url: '/upload/',
+                    data: {
+                        file: encryptedFile,
+                    }
+                }).then(function (response) {
+                    var _id = response.data._id;
 
-                $scope.uploading = false;
-                $location.url('/?_id=' + response.data._id + '&key=' + uuid);
+                    $scope.uploading = false;
+                    $location.url('/?_id=' + response.data._id + '&key=' + uuid);
 
-            }, function (response) {
-                $scope.uploading = false;
-            }, function (evt) {
-                $scope.uploading = true;
-                $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
-            });
-        }
+                }, function (response) {
+                    $scope.uploading = false;
+                }, function (loadEvt) {
+                    $scope.uploading = true;
+                    $scope.progress = parseInt(100.0 * loadEvt.loaded / loadEvt.total);
+                });
+            };
+        })(file);
+
         reader.readAsDataURL(file);
     };
 
