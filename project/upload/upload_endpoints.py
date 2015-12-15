@@ -7,19 +7,19 @@ from ..common.response_utils import json_response
 from ..common.exceptions import BadRequest, NotFound
 from ..database import mongo
 
-upload = Blueprint('upload', __name__)
+upload = Blueprint("upload", __name__)
 
 
 @upload.route("/", methods=["POST"])
 @json_response
 def post_upload():
-    upload_file = request.files.get('file')
+    upload_file = request.files.get("file")
 
     if not upload_file:
         raise BadRequest("UPLOAD_FILE_MANDATORY")
 
     upload_id = unicode(uuid.uuid4())
-    file_path = os.path.join('/uploads/', upload_id)
+    file_path = os.path.join("/uploads/", upload_id)
 
     current_app.logger.info("Saving new file in %s", file_path)
 

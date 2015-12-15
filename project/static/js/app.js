@@ -1,6 +1,6 @@
-var app = angular.module("app", ["ngFileUpload"]);
+var app = angular.module('app', ['ngFileUpload']);
 
-app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Upload) {
+app.controller('BodyCtrl', function ($scope, $location, $rootScope, $http, Upload) {
 
     $scope.uploading = false;
     $scope.progress = 0;
@@ -75,7 +75,7 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
             try {
                 $scope.file = CryptoJS.AES.decrypt(fileData, $location.search().key).toString(CryptoJS.enc.Utf8);
             } catch (err) {
-                console.log("Error decoding the file.");
+                console.log('Error decoding the file.');
             }
             $scope.mimetype = headers()['content-type'];
         }).error(function (response) {});
