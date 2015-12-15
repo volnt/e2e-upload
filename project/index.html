@@ -18,7 +18,8 @@
         </div>
 
         <div ng-if="file">
-            <img ng-src="{{file}}">
+            <img ng-src="{{file}}" ng-if="mimetype==='image/png'">
+            <a ng-href="{{file}}" ng-if="mimetype!=='image/png'">Link to file</a>
         </div>
 
     </body>

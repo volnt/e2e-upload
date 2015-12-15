@@ -57,7 +57,7 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
      * Download and decrypt the file with the given id
      */
     $scope.download = function (_id) {
-        $http.get('/upload/' + _id, {responseType: "arraybuffer"}).success(function (response) {
+        $http.get('/upload/' + _id, {responseType: 'arraybuffer'}).success(function (response, status, headers) {
 
             function _arrayBufferToBase64(buffer) {
                 var binary = '';
@@ -77,6 +77,7 @@ app.controller("BodyCtrl", function ($scope, $location, $rootScope, $http, Uploa
             } catch (err) {
                 console.log("Error decoding the file.");
             }
+            $scope.mimetype = headers()['content-type'];
         }).error(function (response) {});
     };
 

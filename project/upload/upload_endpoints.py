@@ -42,4 +42,4 @@ def get_upload(upload_id):
     if not upload_file or not upload_file.get("path"):
         raise NotFound("UPLOAD_NOT_FOUND")
 
-    return send_file(upload_file["path"])
+    return send_file(upload_file["path"], mimetype=upload_file.get("type"))
