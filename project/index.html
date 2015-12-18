@@ -10,11 +10,13 @@
             <p>It will be encrypted client side with the AES algorithm using a randomly generated key. Then it will be uploaded to the server and made available through a unique URL containing the file id and the key.</p>
             <p>If you lose the key you will not be able to decrypt the file.</p>
 
-            <div class="button" ngf-select="upload($file)">Select file</div>
+            <button class="button" ngf-select="upload($file)" ng-disabled="uploading">Select file</button>
             <div ngf-drop="upload($file)" class="drop-box"
-                 ngf-drag-over-class="'dragover'" ngf-multiple="false">
+                 ngf-drag-over-class="'dragover'" ngf-multiple="false"
+                 ng-disabled="uploading">
                 Drop files here
             </div>
+            <div ng-if="uploading">Uploading ...</div>
         </div>
 
         <div ng-if="file">
