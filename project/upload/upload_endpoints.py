@@ -6,7 +6,7 @@ from flask import Blueprint, request, send_file, current_app
 from ..common.response_utils import json_response
 from ..common.exceptions import BadRequest, NotFound
 from ..database import mongo
-from ..config import B2_CONFIG
+from ..config import B2_ACCOUNT_ID, B2_ACCOUNT_KEY, B2_BUCKET_ID
 
 from .backblaze import b2_authorize_account, b2_get_upload_url, b2_upload_file, b2_download_file
 
@@ -23,19 +23,17 @@ def post_upload():
 
     upload_id = unicode(uuid.uuid4())
 
-    auth_resp = b2_authorize_account(
-        B2_CONFIG["account_id"], B2_CONFIG["account_key"])
+    auth_resp = b2_authorize_account(B2_ACCOUNT_ID, B2_ACCOUNT_KEY)
 
     current_app.logger.info("Auth response <%s>", auth_resp)
 
-    url_resp = b2_get_upload_url(
-        B2_CONFIG["bucket_id"], auth_resp["apiUrl"],
-        auth_resp["authorizationToken"])
+    url_resp = b2_get_upload_url(B2_BUCKET_ID, auth_resp["apiUrl"],
+                                 auth_resp["authorizationToken"])
 
     current_app.logger.info("Url response <%s>", url_resp)
 
-    upload_resp = b2_upload_file(
-        upload_file, url_resp["uploadUrl"], url_resp["authorizationToken"])
+    upload_resp = b2_upload_file(upload_file, url_resp["uploadUrl"],
+                                 url_resp["authorizationToken"])
 
     current_app.logger.info("Saved file %s", upload_resp)
 
@@ -56,13 +54,12 @@ def get_upload(upload_id):
     if not upload_file or not upload_file.get("path"):
         raise NotFound("UPLOAD_NOT_FOUND")
 
-    auth_resp = b2_authorize_account(
-        B2_CONFIG["account_id"], B2_CONFIG["account_key"])
+    auth_resp = b2_authorize_account(B2_ACCOUNT_ID, B2_ACCOUNT_KEY)
 
     current_app.logger.info("Auth response <%s>", auth_resp)
 
-    file_data = b2_download_file(
-        upload_file["path"], auth_resp["downloadUrl"], auth_resp["authorizationToken"])
+    file_data = b2_download_file(upload_file["path"], auth_resp["downloadUrl"],
+                                 auth_resp["authorizationToken"])
 
     current_app.logger.info("File download response <%s>", len(file_data))
 
