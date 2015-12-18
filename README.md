@@ -1,6 +1,6 @@
-# Encrypted File Upload
+# Encrypted File Upload with Backblaze
 
-Simple implementation of client side encryption for file upload.
+Simple implementation of client side encryption for file upload with backblaze as storage backend.
 
 When uploading a file it will be encrypted client side with the AES algorithm using a randomly generated key. Then it will be uploaded to the server and made available through a unique URL containing the file id and the key.
 
