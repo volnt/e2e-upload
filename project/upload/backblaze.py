@@ -87,3 +87,24 @@ def b2_upload_file(file_to_upload, upload_url, authorization_token):
     resp = requests.post(upload_url, data=file_data, headers=headers)
 
     return resp.json()
+
+
+def b2_download_file(file_id, download_url, authorization_token):
+    """
+    Downloads one file from B2.
+
+    Args:
+        file_id: the file id
+        download_url: the root download url
+
+    Returns:
+        the content of the file
+    """
+    request_url = "{}/b2api/v1/b2_download_file_by_id?fileId={}".format(download_url, file_id)
+    headers = {
+        "Authorization": authorization_token,
+    }
+
+    resp = requests.get(request_url, headers=headers)
+
+    return resp.content

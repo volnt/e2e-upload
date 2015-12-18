@@ -1,4 +1,5 @@
 import uuid
+import StringIO
 
 from flask import Blueprint, request, send_file, current_app
 
@@ -7,7 +8,7 @@ from ..common.exceptions import BadRequest, NotFound
 from ..database import mongo
 from ..config import B2_CONFIG
 
-from .backblaze import b2_authorize_account, b2_get_upload_url, b2_upload_file
+from .backblaze import b2_authorize_account, b2_get_upload_url, b2_upload_file, b2_download_file
 
 upload = Blueprint("upload", __name__)
 
@@ -55,4 +56,18 @@ def get_upload(upload_id):
     if not upload_file or not upload_file.get("path"):
         raise NotFound("UPLOAD_NOT_FOUND")
 
-    return send_file(upload_file["path"], mimetype=upload_file.get("type"))
+    auth_resp = b2_authorize_account(
+        B2_CONFIG["account_id"], B2_CONFIG["account_key"])
+
+    current_app.logger.info("Auth response <%s>", auth_resp)
+
+    file_data = b2_download_file(
+        upload_file["path"], auth_resp["downloadUrl"], auth_resp["authorizationToken"])
+
+    current_app.logger.info("File download response <%s>", len(file_data))
+
+    file_io = StringIO.StringIO()
+    file_io.write(file_data)
+    file_io.seek(0)
+
+    return send_file(file_io, mimetype=upload_file.get("type"))
