@@ -100,7 +100,7 @@ def b2_download_file(file_id, download_url, authorization_token):
     Returns:
         the content of the file
     """
-    request_url = "{}/b2api/v1/b2_download_file_by_id?fileId={}".format(download_url, file_id)
+    request_url = u"{}/b2api/v1/b2_download_file_by_id?fileId={}".format(download_url, file_id)
     headers = {
         "Authorization": authorization_token,
     }
