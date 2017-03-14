@@ -1,4 +1,4 @@
-from flask import make_response, jsonify, abort
+from flask import make_response, jsonify
 from functools import wraps
 
 from .exceptions import HttpError
